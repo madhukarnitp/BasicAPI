@@ -45,7 +45,7 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:3000/api/users';
+        const API_URL = 'https://basic-api-lemon.vercel.app//api/users';
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -59,7 +59,6 @@
             errorDiv.innerText = '';
 
             try {
-                // REPLACE '/register' WITH YOUR ACTUAL API ENDPOINT (e.g., http://localhost:3000/api/auth/register)
                 const response = await fetch(`${API_URL}/register`, {
                     method: 'POST',
                     headers: {
