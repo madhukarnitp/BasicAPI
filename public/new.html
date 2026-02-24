@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .night{
+            color: white;
+            background-color: gray;
+            font-weight: 800;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <ul id="oList" style="background-color: bisque;color: brown;">
+        <li id="madhu">Madhukar</li>
+        <li id="Puskar">Puskar</li>
+        <li>Amit</li>
+        <li>Saurav</li>
+        <li>Santosh</li>
+        <li>Prince</li>
+        <li>Nitish</li>
+        <li>Banty</li>
+    </ul>
+
+    <form action="#" onsubmit="handleFormSubmit()">
+        <h2>Email Validator</h2>
+        <input type="text" name="email" id="email">
+        <input type="submit" name="submit" value="submit">
+        <p id="errorDiv" style="color: red;font-size: 18px;"></p>
+        <p id="SuccessDiv" style="color: green;font-size: 18px;"></p>
+    </form>
+
+    <div id="table">
+        <table border="2" cellpadding="7" align="left" style="border-collapse: collapse;">
+            <tr>
+                <th colspan="2">Name</th>
+                <th rowspan="3">Roll Number</th>
+                <th rowspan="3">Grade</th>
+            </tr>
+            <tr><th colspan="2">&nbsp;</th></tr>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+            </tr>
+            <tr>
+                <td>AAA</td>
+                <td>ZZZ</td>
+                <td>123456</td>
+                <td>A</td>
+            </tr>
+            <tr>
+                <td>BBB</td>
+                <td>YYY</td>
+                <td>524163</td>
+                <td>B</td>
+            </tr>
+        </table>
+    </div>
+
+
+
+    <script>
+
+        function handleFormSubmit(){
+            event.preventDefault();
+            const Email = document.getElementById('email').value;
+            const errorDiv = document.getElementById('errorDiv');
+            const SuccessDiv = document.getElementById('SuccessDiv');
+            const requiredDomain = '@nitp.ac.in';
+            if(Email===''){
+                errorDiv.textContent='Please Enter the Email. It can\'t be Empty!';
+                return false;
+            }
+            else if(Email.endsWith(requiredDomain)){
+                SuccessDiv.textContent='Email Validated!';
+            }
+            else{
+                errorDiv.textContent='Invalid Email Domain. it must ends with ' + requiredDomain;
+                return false;
+            }
+        }
+
+        const List = document.getElementById('oList');
+
+        List.addEventListener('click', (e)=>{
+            if(e.target.tagName ==='LI') console.log('You Pressed Li with value: '+e.target.innerHTML);
+            console.log(e.target.getAttribute('id'));
+            //e.target.setAttribute('style', 'background-color: brown;color: bisque;')
+            e.target.className = 'night';
+        })
+
+        const arr=["Madhukar", "Puskar", "Tarun", "Pinki"];
+        for(let i=0;i<arr.length;i++){
+            console.log(arr[i]);
+        }
+
+        const str='cocomelon';
+        const s='co';
+        let lens=s.length, lenstr=str.length;
+
+        for(let i=0;i<=lenstr-lens;i++){
+            if(str[i]==s[0]){
+                let j=0;
+                while(j<lens){
+                    if(str[i+j]===s[j]) j++;
+                }
+                if(j==lens) console.log("Found at Idx: " + i);
+            }
+        }
+        
+        //const username = prompt("Enter Your Username: ", '');
+        //if(username==null || username===''){
+        //    console.log("Invalid Username!");
+        //}
+        //else{
+        //    console.log("Inputed Username is: "+ username);
+        //}
+
+        // Set a cookie
+        //document.cookie = "username=Madhukar; expires=Fri, 21 Feb 2026 12:00:00 UTC; path=/";
+        //document.cookie = "Password=123456; expires=Fri, 21 Feb 2026 12:00:00 UTC; path=/";
+        //console.log(document.cookie);
+
+        //function getcookie(){
+        //    return  document.cookie.split(';').reduce((cookie, item)=>{
+        //        let [key, value] = item.split('=');
+        //        cookie[key.trim()]=value;
+        //        return cookie;
+        //    },{})
+        //}
+
+        //console.log(getcookie());
+
+        const person = [{name:"madhukar", age:20},{name:"madhu", age:19},{name:"puskar", age:21}];
+        let result=person[0];
+        person.forEach((item)=>{
+            if(item.age>result.age) result=item;
+        })
+        console.log("Younger Person is: "+ result.name);
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MakSnack - Premium Makhana Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 50%, #1a472a 100%);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .cart-sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .cart-sidebar.closed {
+            transform: translateX(100%);
+        }
+        
+        .overlay {
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        .overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 100%);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2d5a3d 0%, #1a472a 100%);
+        }
+        
+        .text-makhana {
+            color: #1a472a;
+        }
+        
+        .bg-makhana {
+            background-color: #1a472a;
+        }
+        
+        .makhana-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231a472a' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased">
+
+    <!-- Header -->
+    <header class="fixed w-full z-50 bg-white/95 backdrop-blur-sm shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-makhana rounded-full flex items-center justify-center">
+                        <i class="fas fa-seedling text-white text-xl"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h1 class="text-2xl font-bold text-makhana">MakSnack</h1>
+                        <p class="text-xs text-gray-500">Premium Makhana Store</p>
+                    </div>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#home" class="text-gray-700 hover:text-makhana font-medium transition-colors">Home</a>
+                    <a href="#products" class="text-gray-700 hover:text-makhana font-medium transition-colors">Products</a>
+                    <a href="#about" class="text-gray-700 hover:text-makhana font-medium transition-colors">About</a>
+                    <a href="#benefits" class="text-gray-700 hover:text-makhana font-medium transition-colors">Benefits</a>
+                    <a href="#contact" class="text-gray-700 hover:text-makhana font-medium transition-colors">Contact</a>
+                </nav>
+                
+                <!-- Cart Button -->
+                <div class="flex items-center space-x-4">
+                    <button id="cart-btn" class="relative p-2 text-gray-700 hover:text-makhana transition">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+                    </button>
+                    <button id="menu-toggle" class="md:hidden p-2 text-gray-700">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <div class="px-4 py-4 space-y-3">
+                <a href="#home" class="block text-gray-700 hover:text-makhana font-medium">Home</a>
+                <a href="#products" class="block text-gray-700 hover:text-makhana font-medium">Products</a>
+                <a href="#about" class="block text-gray-700 hover:text-makhana font-medium">About</a>
+                <a href="#benefits" class="block text-gray-700 hover:text-makhana font-medium">Benefits</a>
+                <a href="#contact" class="block text-gray-700 hover:text-makhana font-medium">Contact</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-overlay" class="overlay fixed inset-0 bg-black/50 z-50 hidden"></div>
+    <aside id="cart-sidebar" class="cart-sidebar closed fixed right-0 top-0 h-full w-full sm:w-96 bg-white z-50 shadow-2xl overflow-hidden">
+        <div class="flex flex-col h-full">
+            <!-- Cart Header -->
+            <div class="bg-makhana text-white p-5 flex justify-between items-center">
+                <h2 class="text-xl font-bold"><i class="fas fa-shopping-cart mr-2"></i>Your Cart</h2>
+                <button id="close-cart" class="text-white hover:text-gray-200 transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Cart Items -->
+            <div id="cart-items" class="flex-1 overflow-y-auto p-5 space-y-4">
+                <!-- Cart items will be dynamically added here -->
+            </div>
+            
+            <!-- Cart Footer -->
+            <div class="border-t p-5 bg-gray-50">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-gray-600">Subtotal:</span>
+                    <span id="cart-subtotal" class="text-xl font-bold text-makhana">₹0</span>
+                </div>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-gray-600">Shipping:</span>
+                    <span id="cart-shipping" class="text-lg font-semibold text-green-600">Free</span>
+                </div>
+                <div class="flex justify-between items-center mb-6">
+                    <span class="text-lg font-bold">Total:</span>
+                    <span id="cart-total" class="text-2xl font-bold text-makhana">₹0</span>
+                </div>
+                <button id="checkout-btn" class="w-full btn-primary text-white font-semibold py-4 px-6 rounded-xl hover:shadow-lg transition duration-300">
+                    Proceed to Checkout
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="bg-makhana text-white p-5 rounded-t-2xl flex justify-between items-center">
+                <h2 class="text-xl font-bold"><i class="fas fa-credit-card mr-2"></i>Checkout</h2>
+                <button id="close-checkout" class="text-white hover:text-gray-200 transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="checkout-form" class="p-6 space-y-6">
+                <!-- Contact Information -->
+                <div>
+                    <h3 class="text-lg font-semibold text-makhana mb-4">Contact Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">First Name *</label>
+                            <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makhana focus:border-transparent outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Last Name *</label>
+                            <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makhana focus:border-transparent outline-none transition">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+                            <input type="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makhana focus:border-transparent outline-none transition">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
+                            <input type="tel" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makhana focus:border-transparent outline-none transition">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Delivery Address -->
+                <div>
+                    <h3 class="text-lg font-semibold text-makhana mb-4">Delivery Address</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Street Address *</label>
+                            <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makhana focus:border-transparent outline-none transition">
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">City *</label>
+                                <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makhana focus:border-transparent outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">State *</label>
+                                <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makhana focus:border-transparent outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">PIN Code *</label>
+                                <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makhana focus:border-transparent outline-none transition">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Payment Method -->
+                <div>
+                    <h3 class="text-lg font-semibold text-makhana mb-4">Payment Method</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="payment" value="card" class="peer sr-only" checked>
+                            <div class="p-4 border-2 border-gray-200 rounded-xl peer-checked:border-makhana peer-checked:bg-green-50 transition">
+                                <i class="fas fa-credit-card text-2xl text-makhana mb-2"></i>
+                                <p class="font-medium">Credit/Debit Card</p>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="payment" value="upi" class="peer sr-only">
+                            <div class="p-4 border-2 border-gray-200 rounded-xl peer-checked:border-makhana peer-checked:bg-green-50 transition">
+                                <i class="fas fa-mobile-alt text-2xl text-makhana mb-2"></i>
+                                <p class="font-medium">UPI</p>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="payment" value="cod" class="peer sr-only">
+                            <div class="p-4 border-2 border-gray-200 rounded-xl peer-checked:border-makhana peer-checked:bg-green-50 transition">
+                                <i class="fas fa-money-bill-wave text-2xl text-makhana mb-2"></i>
+                                <p class="font-medium">Cash on Delivery</p>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <!-- Card Details (shown when card is selected) -->
+                    <div id="card-details" class="mt-4 p-4 bg-gray-50 rounded-xl">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Card Number *</label>
+                                <input type="text" placeholder="1234 5678 9012 3456" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makhana focus:border-transparent outline-none transition">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Expiry Date *</label>
+                                    <input type="text" placeholder="MM/YY" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makhana focus:border-transparent outline-none transition">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">CVV *</label>
+                                    <input type="text" placeholder="123" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makhana focus:border-transparent outline-none transition">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Card Holder Name *</label>
+                                <input type="text" placeholder="John Doe" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makhana focus:border-transparent outline-none transition">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Order Summary -->
+                <div class="bg-gray-50 p-4 rounded-xl">
+                    <h3 class="text-lg font-semibold text-makhana mb-3">Order Summary</h3>
+                    <div id="checkout-summary" class="space-y-2 text-sm">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                    <div class="border-t mt-3 pt-3 flex justify-between font-bold">
+                        <span>Total to Pay:</span>
+                        <span id="checkout-total" class="text-xl text-makhana">₹0</span>
+                    </div>
+                </div>
+                
+                <button type="submit" class="w-full btn-primary text-white font-semibold py-4 px-6 rounded-xl hover:shadow-lg transition duration-300">
+                    <i class="fas fa-lock mr-2"></i>Place Order - ₹<span id="final-total">0</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-8 text-center">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-check text-4xl text-green-500"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-makhana mb-2">Order Placed Successfully!</h2>
+            <p class="text-gray-600 mb-6">Thank you for your order. You will receive a confirmation email shortly.</p>
+            <p class="text-sm text-gray-500 mb-6">Order ID: <span id="order-id" class="font-mono font-bold">#MAK-000000</span></p>
+            <button id="close-success" class="w-full btn-primary text-white font-semibold py-3 px-6 rounded-xl hover:shadow-lg transition duration-300">
+                Continue Shopping
+            </button>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-gradient min-h-screen flex items-center pt-20 makhana-pattern">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="text-white">
+                    <span class="inline-block px-4 py-2 bg-white/20 rounded-full text-sm font-medium mb-6">
+                        <i class="fas fa-leaf mr-2"></i>100% Natural & Organic
+                    </span>
+                    <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6">
+                        Premium Quality <br>
+                        <span class="text-yellow-300">Makhana</span> Snacks
+                    </h1>
+                    <p class="text-xl text-green-100 mb-8 leading-relaxed">
+                        Discover the goodness of handpicked fox nuts. Roasted, seasoned, and packed with love for your healthy snacking experience.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#products" class="px-8 py-4 bg-yellow-400 text-green-900 font-semibold rounded-xl hover:bg-yellow-300 transition shadow-lg hover:shadow-xl">
+                            <i class="fas fa-shopping-bag mr-2"></i>Shop Now
+                        </a>
+                        <a href="#about" class="px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-xl hover:bg-white hover:text-green-900 transition">
+                            Learn More
+                        </a>
+                    </div>
+                    
+                    <!-- Trust Badges -->
+                    <div class="mt-12 flex flex-wrap gap-6">
+                        <div class="flex items-center">
+                            <i class="fas fa-truck text-yellow-300 text-xl mr-2"></i>
+                            <span class="text-sm">Free Delivery</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-shield-alt text-yellow-300 text-xl mr-2"></i>
+                            <span class="text-sm">Quality Assured</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-undo text-yellow-300 text-xl mr-2"></i>
+                            <span class="text-sm">Easy Returns</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Hero Image -->
+                <div class="relative">
+                    <div class="absolute -top-10 -left-10 w-40 h-40 bg-yellow-400/20 rounded-full blur-3xl"></div>
+                    <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-green-400/20 rounded-full blur-3xl"></div>
+                    <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Makhana Snacks" class="relative rounded-3xl shadow-2xl w-full">
+                    
+                    <!-- Floating Badge -->
+                    <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-lg">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-star text-yellow-500"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-2xl font-bold text-makhana">4.9</p>
+                                <p class="text-xs text-gray-500">Rating</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-seedling text-2xl text-makhana"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900">100% Natural</h3>
+                    <p class="text-sm text-gray-500">No preservatives</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-fire text-2xl text-makhana"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900">Low Calorie</h3>
+                    <p class="text-sm text-gray-500">Healthy snacking</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-brain text-2xl text-makhana"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900">Brain Food</h3>
+                    <p class="text-sm text-gray-500">Rich in nutrients</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-heart text-2xl text-makhana"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900">Heart Healthy</h3>
+                    <p class="text-sm text-gray-500">Low in fat</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-makhana font-medium">Our Products</span>
+                <h2 class="text-4xl font-bold text-gray-900 mt-2">Premium Makhana Collection</h2>
+                <p class="mt-4 text-gray-600 max-w-2xl mx-auto">Handpicked, premium quality fox nuts in various delicious flavors</p>
+            </div>
+
+            <!-- Category Tabs -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+                <button class="category-btn active px-6 py-3 bg-makhana text-white font-medium rounded-full transition" data-category="all">All Products</button>
+                <button class="category-btn px-6 py-3 bg-white text-gray-700 font-medium rounded-full hover:bg-makhana hover:text-white transition" data-category="roasted">Roasted</button>
+                <button class="category-btn px-6 py-3 bg-white text-gray-700 font-medium rounded-full hover:bg-makhana hover:text-white transition" data-category="flavored">Flavored</button>
+                <button class="category-btn px-6 py-3 bg-white text-gray-700 font-medium rounded-full hover:bg-makhana hover:text-white transition" data-category="gifts">Gift Packs</button>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <!-- Products will be dynamically added here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="relative">
+                    <div class="absolute -top-4 -left-4 w-24 h-24 bg-yellow-400/20 rounded-full blur-xl"></div>
+                    <img src="https://images.unsplash.com/photo-1595855709915-bd98be3768e3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="About Makhana" class="relative rounded-2xl shadow-xl w-full">
+                    <div class="absolute -bottom-6 -right-6 bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center">
+                            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-award text-3xl text-makhana"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-3xl font-bold text-makhana">15+</p>
+                                <p class="text-sm text-gray-500">Years Experience</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <span class="text-makhana font-medium">About Us</span>
+                    <h2 class="text-4xl font-bold text-gray-900 mt-2 mb-6">Bringing You the Best Makhana Since 2008</h2>
+                    <p class="text-gray-600 leading-relaxed mb-6">
+                        MakSnack was founded with a simple mission: to bring the finest quality Makhana (Fox Nuts) to health-conscious snackers across India and the world. Our journey began in the fertile fields of Mithila, Bihar, where Makhana has been cultivated for centuries.
+                    </p>
+                    <p class="text-gray-600 leading-relaxed mb-6">
+                        We work directly with local farmers, ensuring fair prices and sustainable farming practices. Every batch of our Makhana is carefully selected, roasted, and seasoned in our state-of-the-art facility to maintain the highest standards of quality and hygiene.
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-6 mb-8">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
+                            <span class="text-gray-700">ISO Certified</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
+                            <span class="text-gray-700">FSSAI Approved</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
+                            <span class="text-gray-700">Farm to Pack</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
+                            <span class="text-gray-700">Eco Packaging</span>
+                        </div>
+                    </div>
+                    
+                    <a href="#contact" class="inline-flex items-center px-8 py-4 btn-primary text-white font-semibold rounded-xl hover:shadow-lg transition duration-300">
+                        Get in Touch <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="benefits" class="py-20 bg-makhana text-white makhana-pattern">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold">Health Benefits of Makhana</h2>
+                <p class="mt-4 text-green-100">Why you should make Makhana your daily snack</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white/10 backdrop-blur-sm p-8 rounded-2xl">
+                    <div class="w-16 h-16 bg-yellow-400/20 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-brain text-3xl text-yellow-300"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Brain Health</h3>
+                    <p class="text-green-100">Rich in magnesium and potassium, Makhana helps improve brain function and reduces stress levels.</p>
+                </div>
+                
+                <div class="bg-white/10 backdrop-blur-sm p-8 rounded-2xl">
+                    <div class="w-16 h-16 bg-yellow-400/20 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-heartbeat text-3xl text-yellow-300"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Heart Healthy</h3>
+                    <p class="text-green-100">Low in cholesterol and sodium, making it perfect for maintaining cardiovascular health.</p>
+                </div>
+                
+                <div class="bg-white/10 backdrop-blur-sm p-8 rounded-2xl">
+                    <div class="w-16 h-16 bg-yellow-400/20 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-weight text-3xl text-yellow-300"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Weight Management</h3>
+                    <p class="text-green-100">High in protein and fiber, keeping you full longer while being low in calories.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900">What Our Customers Say</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-lg">
+                    <div class="flex text-yellow-400 mb-4">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 mb-6">"The Himalayan Pink Salt flavor is absolutely amazing! Perfect guilt-free snack for my evening茶 time. Highly recommended!"</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-gray-500"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="font-semibold">Priya Sharma</p>
+                            <p class="text-sm text-gray-500">Mumbai</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-8 rounded-2xl shadow-lg">
+                    <div class="flex text-yellow-400 mb-4">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 mb-6">"Best quality Makhana I've ever had! The gift pack was beautifully packed and arrived fresh. Will definitely order again."</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-gray-500"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="font-semibold">Rahul Verma</p>
+                            <p class="text-sm text-gray-500">Delhi</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-8 rounded-2xl shadow-lg">
+                    <div class="flex text-yellow-400 mb-4">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="text-gray-600 mb-6">"As a fitness enthusiast, I'm always looking for healthy snacks. MakSnack has become my go-to choice. Great taste and quality!"</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-gray-500"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="font-semibold">Ankit Patel</p>
+                            <p class="text-sm text-gray-500">Ahmedabad</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div>
+                    <span class="text-makhana font-medium">Contact Us</span>
+                    <h2 class="text-4xl font-bold text-gray-900 mt-2 mb-6">Get in Touch</h2>
+                    <p class="text-gray-600 mb-8">Have questions or feedback? We'd love to hear from you.</p>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-map-marker-alt text-makhana"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-semibold text-gray-900">Address</h4>
+                                <p class="text-gray-600">123 Makhana Market, Darbhanga<br>Bihar, India - 846004</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-envelope text-makhana"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-semibold text-gray-900">Email</h4>
+                                <p class="text-gray-600">info@maksnack.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-phone text-makhana"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-semibold text-gray-900">Phone</h4>
+                                <p class="text-gray-600">+91 98765 43210</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-8 rounded-2xl">
+                    <form class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                                <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makhana focus:border-transparent outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makhana focus:border-transparent outline-none transition">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                            <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makhana focus:border-transparent outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                            <textarea rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makhana focus:border-transparent outline-none transition resize-none"></textarea>
+                        </div>
+                        <button type="submit" class="w-full btn-primary text-white font-semibold py-4 px-6 rounded-xl hover:shadow-lg transition duration-300">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <!-- Brand -->
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-makhana rounded-full flex items-center justify-center">
+                            <i class="fas fa-seedling text-white text-xl"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-2xl font-bold">MakSnack</h3>
+                            <p class="text-xs text-gray-400">Premium Makhana Store</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 max-w-sm mb-6">
+                        Bringing you the finest quality Makhana snacks, handpicked from the fields of Bihar and delivered to your doorstep with love.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:bg-makhana hover:text-white transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:bg-makhana hover:text-white transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:bg-makhana hover:text-white transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:bg-makhana hover:text-white transition">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#home" class="text-gray-400 hover:text-white transition">Home</a></li>
+                        <li><a href="#products" class="text-gray-400 hover:text-white transition">Products</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-white transition">About Us</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Customer Service -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Customer Service</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">FAQ</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Shipping Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Returns & Refunds</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Payment Methods -->
+            <div class="border-t border-gray-800 pt-8">
+                <div class="flex flex-wrap justify-between items-center">
+                    <p class="text-gray-400 text-sm mb-4 md:mb-0">
+                        © 2024 MakSnack. All rights reserved.
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <span class="text-gray-400 text-sm">We Accept:</span>
+                        <div class="flex gap-2">
+                            <div class="w-10 h-6 bg-gray-700 rounded flex items-center justify-center text-xs">Visa</div>
+                            <div class="w-10 h-6 bg-gray-700 rounded flex items-center justify-center text-xs">MC</div>
+                            <div class="w-10 h-6 bg-gray-700 rounded flex items-center justify-center text-xs">UPI</div>
+                            <div class="w-10 h-6 bg-gray-700 rounded flex items-center justify-center text-xs">COD</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Cart Functionality -->
+    <script>
+        // Product Data
+        const products = [
+            {
+                id: 1,
+                name: "Classic Roasted Makhana",
+                description: "Traditional roasted fox nuts with minimal oil",
+                price: 249,
+                originalPrice: 299,
+                image: "https://images.unsplash.com/photo-1595855709915-bd98be3768e3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                category: "roasted",
+                weight: "200g",
+                rating: 4.8,
+                reviews: 245
+            },
+            {
+                id: 2,
+                name: "Himalayan Pink Salt",
+                description: "Lightly salted with premium pink Himalayan salt",
+                price: 279,
+                originalPrice: 329,
+                image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                category: "flavored",
+                weight: "200g",
+                rating: 4.9,
+                reviews: 312
+            },
+            {
+                id: 3,
+                name: "Spicy Chaat Masala",
+                description: "Tangy and spicy chaat masala flavored makhana",
+                price: 299,
+                originalPrice: 349,
+                image: "https://images.unsplash.com/photo-1621939514649-280e2ee25f60?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                category: "flavored",
+                weight: "200g",
+                rating: 4.7,
+                reviews: 189
+            },
+            {
+                id: 4,
+                name: "Cream & Onion",
+                description: "Delicious cream and onion flavored fox nuts",
+                price: 289,
+                originalPrice: 339,
+                image: "https://images.unsplash.com/photo-1599940824399-b87987ce0799?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                category: "flavored",
+                weight: "200g",
+                rating: 4.6,
+                reviews: 156
+            },
+            {
+                id: 5,
+                name: "Black Pepper",
+                description: "Bold black pepper flavored makhana",
+                price: 269,
+                originalPrice: 319,
+                image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                category: "flavored",
+                weight: "200g",
+                rating: 4.8,
+                reviews: 203
+            },
+            {
+                id: 6,
+                name: "Premium Gift Pack",
+                description: "Assorted 4 flavors in an elegant gift box",
+                price: 999,
+                originalPrice: 1299,
+                image: "https://images.unsplash.com/photo-1545725705-4e589bb8027e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                category: "gifts",
+                weight: "800g",
+                rating: 4.9,
+                reviews: 89
+            },
+            {
+                id: 7,
+                name: "Family Pack - Assorted",
+                description: "Large family pack with 3 different flavors",
+                price: 699,
+                originalPrice: 849,
+                image: "https://images.unsplash.com/photo-1599940824399-b87987ce0799?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                category: "gifts",
+                weight: "600g",
+                rating: 4.7,
+                reviews: 134
+            },
+            {
+                id: 8,
+                name: "Unsalted Natural",
+                description: "Pure, unsalted makhana for health conscious",
+                price: 229,
+                originalPrice: 279,
+                image: "https://images.unsplash.com/photo-1595855709915-bd98be3768e3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                category: "roasted",
+                weight: "200g",
+                rating: 4.8,
+                reviews: 267
+            }
+        ];
+
+        // Cart State
+        let cart = JSON.parse(localStorage.getItem('maksnack-cart')) || [];
+
+        // DOM Elements
+        const cartBtn = document.getElementById('cart-btn');
+        const cartSidebar = document.getElementById('cart-sidebar');
+        const cartOverlay = document.getElementById('cart-overlay');
+        const closeCartBtn = document.getElementById('close-cart');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartCount = document.getElementById('cart-count');
+        const cartSubtotal = document.getElementById('cart-subtotal');
+        const cartTotal = document.getElementById('cart-total');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        const checkoutModal = document.getElementById('checkout-modal');
+        const closeCheckoutBtn = document.getElementById('close-checkout');
+        const checkoutForm = document.getElementById('checkout-form');
+        const checkoutSummary = document.getElementById('checkout-summary');
+        const checkoutTotal = document.getElementById('checkout-total');
+        const finalTotal = document.getElementById('final-total');
+        const successModal = document.getElementById('success-modal');
+        const closeSuccessBtn = document.getElementById('close-success');
+        const orderId = document.getElementById('order-id');
+        const productsGrid = document.getElementById('products-grid');
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuToggle = document.getElementById('menu-toggle');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts(products);
+            updateCartUI();
+            
+            // Mobile menu toggle
+            menuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        });
+
+        // Render Products
+        function renderProducts(productsToRender) {
+            productsGrid.innerHTML = productsToRender.map(product => `
+                <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300" data-category="${product.category}">
+                    <div class="relative">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover">
+                        <div class="absolute top-3 left-3">
+                            <span class="px-3 py-1 bg-green-500 text-white text-xs font-semibold rounded-full">${product.weight}</span>
+                        </div>
+                        <div class="absolute top-3 right-3">
+                            <span class="px-3 py-1 bg-red-500 text-white text-xs font-semibold rounded-full">${Math.round((1 - product.price / product.originalPrice) * 100)}% OFF</span>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400 text-sm">
+                                ${getStars(product.rating)}
+                            </div>
+                            <span class="text-gray-500 text-sm ml-2">(${product.reviews})</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-1">${product.name}</h3>
+                        <p class="text-gray-500 text-sm mb-3">${product.description}</p>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-xl font-bold text-makhana">₹${product.price}</span>
+                                <span class="text-gray-400 line-through ml-2">₹${product.originalPrice}</span>
+                            </div>
+                        </div>
+                        <button onclick="addToCart(${product.id})" class="w-full mt-4 btn-primary text-white font-semibold py-3 px-4 rounded-xl hover:shadow-lg transition duration-300 flex items-center justify-center">
+                            <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Get Star Rating HTML
+        function getStars(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= Math.floor(rating)) {
+                    stars += '<i class="fas fa-star"></i>';
+                } else if (i - rating < 1 && i - rating > 0) {
+                    stars += '<i class="fas fa-star-half-alt"></i>';
+                } else {
+                    stars += '<i class="far fa-star"></i>';
+                }
+            }
+            return stars;
+        }
+
+        // Category Filter
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                categoryBtns.forEach(b => {
+                    b.classList.remove('bg-makhana', 'text-white');
+                    b.classList.add('bg-white', 'text-gray-700');
+                });
+                btn.classList.remove('bg-white', 'text-gray-700');
+                btn.classList.add('bg-makhana', 'text-white');
+                
+                const category = btn.dataset.category;
+                if (category === 'all') {
+                    renderProducts(products);
+                } else {
+                    const filtered = products.filter(p => p.category === category);
+                    renderProducts(filtered);
+                }
+            });
+        });
+
+        // Add to Cart
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            
+            saveCart();
+            updateCartUI();
+            openCart();
+            
+            // Show notification
+            showNotification(`${product.name} added to cart!`);
+        }
+
+        // Remove from Cart
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            saveCart();
+            updateCartUI();
+        }
+
+        // Update Quantity
+        function updateQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    saveCart();
+                    updateCartUI();
+                }
+            }
+        }
+
+        // Save Cart to LocalStorage
+        function saveCart() {
+            localStorage.setItem('maksnack-cart', JSON.stringify(cart));
+        }
+
+        // Update Cart UI
+        function updateCartUI() {
+            // Update cart count
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            
+            // Update cart items
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-shopping-basket text-6xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500">Your cart is empty</p>
+                        <button onclick="closeCart(); renderProducts(products); document.getElementById('products').scrollIntoView({behavior: 'smooth'});" class="mt-4 text-makhana font-semibold hover:underline">
+                            Start Shopping
+                        </button>
+                    </div>
+                `;
+            } else {
+                cartItemsContainer.innerHTML = cart.map(item => `
+                    <div class="flex items-start bg-gray-50 p-4 rounded-xl">
+                        <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded-lg">
+                        <div class="ml-4 flex-1">
+                            <h4 class="font-semibold text-gray-900 text-sm">${item.name}</h4>
+                            <p class="text-makhana font-bold">₹${item.price}</p>
+                            <div class="flex items-center mt-2">
+                                <button onclick="updateQuantity(${item.id}, -1)" class="w-8 h-8 bg-white border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-100 transition">
+                                    <i class="fas fa-minus text-xs"></i>
+                                </button>
+                                <span class="mx-3 font-semibold">${item.quantity}</span>
+                                <button onclick="updateQuantity(${item.id}, 1)" class="w-8 h-8 bg-white border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-100 transition">
+                                    <i class="fas fa-plus text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart(${item.id})" class="text-gray-400 hover:text-red-500 transition">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+            
+            // Update totals
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = subtotal >= 500 ? 0 : 49;
+            const total = subtotal + shipping;
+            
+            cartSubtotal.textContent = `₹${subtotal}`;
+            cartTotal.textContent = `₹${total}`;
+        }
+
+        // Open Cart
+        function openCart() {
+            cartSidebar.classList.remove('closed');
+            cartOverlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Cart
+        function closeCart() {
+            cartSidebar.classList.add('closed');
+            cartOverlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // Cart Events
+        cartBtn.addEventListener('click', openCart);
+        closeCartBtn.addEventListener('click', closeCart);
+        cartOverlay.addEventListener('click', closeCart);
+
+        // Checkout
+        checkoutBtn.addEventListener('click', () => {
+            if (cart.length === 0) {
+                showNotification('Your cart is empty!');
+                return;
+            }
+            
+            closeCart();
+            checkoutModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            
+            // Update checkout summary
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = subtotal >= 500 ? 0 : 49;
+            const total = subtotal + shipping;
+            
+            checkoutSummary.innerHTML = cart.map(item => `
+                <div class="flex justify-between">
+                    <span>${item.name} x ${item.quantity}</span>
+                    <span>₹${item.price * item.quantity}</span>
+                </div>
+            `).join('') + `
+                <div class="flex justify-between text-gray-500">
+                    <span>Shipping</span>
+                    <span>${shipping === 0 ? 'Free' : '₹' + shipping}</span>
+                </div>
+            `;
+            
+            checkoutTotal.textContent = `₹${total}`;
+            finalTotal.textContent = total;
+        });
+
+        // Close Checkout
+        closeCheckoutBtn.addEventListener('click', () => {
+            checkoutModal.classList.add('hidden');
+            document.body.style.overflow = '';
+        });
+
+        // Checkout Form Submit
+        checkoutForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Generate order ID
+            const newOrderId = 'MAK-' + Date.now().toString().slice(-6);
+            orderId.textContent = '#' + newOrderId;
+            
+            // Clear cart
+            cart = [];
+            saveCart();
+            updateCartUI();
+            
+            // Show success modal
+            checkoutModal.classList.add('hidden');
+            successModal.classList.remove('hidden');
+        });
+
+        // Close Success Modal
+        closeSuccessBtn.addEventListener('click', () => {
+            successModal.classList.add('hidden');
+            document.body.style.overflow = '';
+        });
+
+        // Show Notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-4 right-4 bg-makhana text-white px-6 py-3 rounded-xl shadow-lg z-50 animate-pulse';
+            notification.innerHTML = `<i class="fas fa-check-circle mr-2"></i>${message}`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    // Close mobile menu if open
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
