@@ -13,8 +13,6 @@ const twilio = require('twilio')
 
 connectDB();
 
-const PORT = process.env.PORT;
-
 const limiter = rateLimit({
     windowMs: 1000*60,
     max: 100,
@@ -55,6 +53,7 @@ app.use((error, req,res,next)=>{
     }
 })
 
+export default app;
 //app.listen(PORT, ()=>{
 //    console.log(`Server is Up and runnig at Port: ${PORT} `);
 //})
