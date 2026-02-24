@@ -27,7 +27,8 @@ app.use('/uploads', express.static(path.join(__dirname,'uploads')));
 app.use(cors({
         origgin: [
             "http://localhost:3000",
-            "basic-api-delta.vercel.app"
+            "https://basic-api-sandy.vercel.app/",
+            "https://basic-56ioauzuo-madhukarkug25cs-9202s-projects.vercel.app/",
         ]
 }));
 //app.use(helmet());  //mostly used in ONLINE live server as can create testing problem.
