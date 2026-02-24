@@ -26,7 +26,12 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname,'uploads')));
 
-app.use(cors());
+app.use(cors({
+        origgin: [
+            "http://localhost:3000",
+            "basic-api-delta.vercel.app"
+        ]
+}));
 //app.use(helmet());  //mostly used in ONLINE live server as can create testing problem.
 
 app.get('/api/health',(req,res)=> res.json({HealthStatus: 'Ok', message: 'Server is Up and Running on PORT NO: 3000'}));
