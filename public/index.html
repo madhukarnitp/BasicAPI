@@ -6,6 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Records</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script>
+        function checkAuth(){
+            const token= localStorage.getItem('token');
+            if(!token){
+                window.location.href='login';
+            }
+            return token;
+        }
+        checkAuth();
+    </script>
 </head>
 
 <body class="bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-100 min-h-screen p-8">
@@ -253,14 +263,6 @@
         
         let currentPage = 1;
         let currentSearch= '';
-
-        function checkAuth(){
-            const token= localStorage.getItem('token');
-            if(!token){
-                window.location.href='login';
-            }
-            return token;
-        }
 
         function handleLogout(){
             localStorage.removeItem('token');
